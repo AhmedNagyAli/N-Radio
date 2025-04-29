@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\City;
+use App\Models\Tag;
 use App\Models\Country;
 use App\Models\Language;
 use App\Models\Station;
@@ -28,9 +29,10 @@ class StationController extends Controller
     {
         $countries = Country::all();
         $cities = City::all();
+        $tags = Tag::all();
         $languages = Language::all();
 
-        return view('stations.create', compact('countries', 'cities', 'languages'));
+        return view('stations.create', compact('countries', 'cities','tags', 'languages'));
     }
 
     public function store(Request $request)
@@ -38,7 +40,7 @@ class StationController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:2048',
             'src' => 'required|string',
             'country_id' => 'required|exists:countries,id',
             'city_id' => 'required|exists:cities,id',

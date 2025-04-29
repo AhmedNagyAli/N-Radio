@@ -6,8 +6,7 @@ use App\Http\Controllers\StationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
-
+    return redirect()->route('stations.index');
 });
 
 Route::controller(AuthController::class)->group(function (){

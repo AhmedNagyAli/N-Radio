@@ -12,7 +12,25 @@
                 <a href="{{ route('stations.index') }}" class="text-white hover:text-gray-300 px-3 py-2 rounded-md text-lg font-bold">Home</a>
                 <a href="{{ route('stations.index') }}" class="text-white hover:text-gray-300 px-3 py-2 rounded-md text-lg font-bold">Stations</a>
                 <a href="{{ route('stations.create') }}" class="text-white hover:text-gray-300 px-3 py-2 rounded-md text-lg font-bold">Share a Station</a>
-                <a href="#" class="text-white hover:text-gray-300 px-3 py-2 rounded-md text-lg font-bold">Contact</a>
+                @auth
+<div class="relative group">
+    <button class="text-white hover:text-gray-300 px-3 py-2 rounded-md text-lg font-bold focus:outline-none">
+        Favorites
+    </button>
+
+    <!-- Dropdown -->
+    <div class="absolute mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50 hidden group-hover:block">
+        @forelse(auth()->user()->favoriteStations as $station)
+            <div class="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-default">
+                {{ $station->name }}
+            </div>
+        @empty
+            <div class="px-4 py-2 text-gray-600">No favorites yet</div>
+        @endforelse
+    </div>
+</div>
+@endauth
+
 
                 <!-- Auth Avatar with Dropdown -->
 @auth

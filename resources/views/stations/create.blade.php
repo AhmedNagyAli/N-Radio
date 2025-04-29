@@ -20,7 +20,6 @@
 
         <div class="mb-4">
             <label class="block font-semibold mb-1" for="image">Image</label>
-
             <label for="image" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
                 <div class="flex flex-col items-center justify-center pt-5 pb-6">
                     <svg class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,7 +31,6 @@
                 <input id="image" name="image" type="file" class="hidden" />
             </label>
             <p id="file-name" class="text-lg mt-2 text-gray-700"></p>
-
             <small class="text-red-600 hidden" id="error-image"></small>
         </div>
 
@@ -81,6 +79,17 @@
             <small class="text-red-600 hidden" id="error-type"></small>
         </div>
 
+        <!-- Tags Selection -->
+        <div class="mb-4">
+            <label class="block font-semibold mb-1" for="tags">Tags</label>
+            <select name="tags[]" id="tags" class="w-full border rounded p-2" multiple>
+                @foreach ($tags as $tag)
+                    <option value="{{ $tag->id }}">{{ $tag->tag }}</option>
+                @endforeach
+            </select>
+            <small class="text-red-600 hidden" id="error-tags"></small>
+        </div>
+
         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Create Station
         </button>
@@ -93,88 +102,84 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    console.log("dsfgf");
-
     $(function() {
-    $('#create-station-form').on('submit', function(e) {
-        e.preventDefault();
+        $('#create-station-form').on('submit', function(e) {
+            e.preventDefault();
 
-        let hasError = false;
+            let hasError = false;
 
-        // Clear old errors (only hide <small> elements)
-        $('small[id^="error-"]').addClass('hidden').text('');
+            // Clear old errors (only hide <small> elements)
+            $('small[id^="error-"]').addClass('hidden').text('');
 
-        // Validate fields manually
-        const requiredFields = ['name', 'src', 'country_id', 'city_id', 'language_id', 'type'];
-        requiredFields.forEach(function(field) {
-            const value = $('#' + field).val();
-            if (!value) {
-                hasError = true;
-                $('#error-' + field).text('This field is required.').removeClass('hidden');
-            }
-        });
-
-        if (hasError) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: 'Please fill all required fields!',
-            });
-            return;
-        }
-
-        let formData = new FormData(this);
-
-        $.ajax({
-            type: 'POST',
-            url: '{{ route('stations.store') }}',
-            data: formData,
-            contentType: false,
-            processData: false,
-            headers: {
-                'Accept': 'application/json'
-            },
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-                $('#create-station-form')[0].reset();
-                // Hide all error messages after success
-                $('small[id^="error-"]').addClass('hidden').text('');
-            },
-            error: function(xhr) {
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    // Show field-specific errors from backend too if any
-                    $.each(xhr.responseJSON.errors, function(key, messages) {
-                        $('#error-' + key).text(messages[0]).removeClass('hidden');
-                    });
+            // Validate fields manually
+            const requiredFields = ['name', 'src', 'country_id', 'city_id', 'language_id', 'type'];
+            requiredFields.forEach(function(field) {
+                const value = $('#' + field).val();
+                if (!value) {
+                    hasError = true;
+                    $('#error-' + field).text('This field is required.').removeClass('hidden');
                 }
+            });
+
+            if (hasError) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error!',
-                    text: 'Please fix the errors and try again!',
-                    confirmButtonText: 'OK'
+                    title: 'Validation Error',
+                    text: 'Please fill all required fields!',
                 });
+                return;
+            }
+
+            let formData = new FormData(this);
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('stations.store') }}',
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: {
+                    'Accept': 'application/json'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: response.message,
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                    $('#create-station-form')[0].reset();
+                    // Hide all error messages after success
+                    $('small[id^="error-"]').addClass('hidden').text('');
+                },
+                error: function(xhr) {
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        // Show field-specific errors from backend too if any
+                        $.each(xhr.responseJSON.errors, function(key, messages) {
+                            $('#error-' + key).text(messages[0]).removeClass('hidden');
+                        });
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Please fix the errors and try again!',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('#image').change(function(e) {
+            const fileName = e.target.files[0]?.name;
+            if (fileName) {
+                $('#file-name').text(fileName);
+            } else {
+                $('#file-name').text('');
             }
         });
     });
-});
-
-$(document).ready(function() {
-    $('#image').change(function(e) {
-        const fileName = e.target.files[0]?.name;
-        if (fileName) {
-            $('#file-name').text(fileName);
-        } else {
-            $('#file-name').text('');
-        }
-    });
-});
-
-
 </script>
 @endsection
