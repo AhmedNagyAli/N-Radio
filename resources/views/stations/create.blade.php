@@ -48,21 +48,32 @@
 
         <!-- Dropdown Fields -->
         @foreach ([
-            'country_id' => $countries,
-            'city_id' => $cities,
-            'language_id' => $languages
-        ] as $id => $collection)
-            <div>
-                <label class="block text-sm font-medium mb-1 capitalize" for="{{ $id }}">{{ str_replace('_', ' ', $id) }} <span class="text-red-500">*</span></label>
-                <select id="{{ $id }}" name="{{ $id }}" class="w-full p-3 bg-gray-800 border border-gray-700 text-white rounded-lg">
-                    <option value="">Select</option>
-                    @foreach ($collection as $item)
-                        <option value="{{ $item->id }}">{{ $item->country ?? $item->city ?? $item->language }}</option>
-                    @endforeach
-                </select>
-                <small class="text-red-400 hidden" id="error-{{ $id }}"></small>
-            </div>
-        @endforeach
+    'country_id' => $countries,
+    'city_id' => $cities,
+    'language_id' => $languages
+] as $id => $collection)
+    <div>
+        <label class="block text-sm font-medium mb-1 capitalize" for="{{ $id }}">
+            {{ ucwords(str_replace(['_id', '_'], ['',' '], $id)) }} <span class="text-red-500">*</span>
+        </label>
+        <select id="{{ $id }}" name="{{ $id }}" class="w-full p-3 bg-gray-800 border border-gray-700 text-white rounded-lg">
+            <option value="">Select</option>
+            @foreach ($collection as $item)
+                <option value="{{ $item->id }}">
+                    @if ($id === 'country_id')
+                        {{ $item->country }}
+                    @elseif ($id === 'city_id')
+                        {{ $item->city }}
+                    @elseif ($id === 'language_id')
+                        {{ $item->language }}
+                    @endif
+                </option>
+            @endforeach
+        </select>
+        <small class="text-red-400 hidden" id="error-{{ $id }}"></small>
+    </div>
+@endforeach
+
 
         <!-- Type -->
         <div>
@@ -140,7 +151,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: response.message,
+                        text: "request was sent to us and we will accept it soooon",
                         timer: 3000,
                         showConfirmButton: false
                     });
