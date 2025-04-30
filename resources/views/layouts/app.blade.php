@@ -15,7 +15,8 @@
     @include('components.navbar')
     @yield('header')
     @yield('content')
-    @yield('scripts')
     @include('components.footer')
+    @yield('scripts')
+
 </body>
 </html>

@@ -1,99 +1,94 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-    <h1 class="text-2xl font-bold mb-6">Create Station</h1>
+<div class="min-h-screen flex items-center justify-center bg-zinc-950 px-6 py-12">
+<div class="max-w-4xl mx-auto mt-10 p-6 bg-zinc-900 text-white rounded-2xl shadow-lg border border-gray-700">
+    <h1 class="text-3xl font-bold mb-6 text-white">🎙️ Create a New Station</h1>
 
-    <form id="create-station-form" method="POST" action="{{ route('stations.store') }}" enctype="multipart/form-data">
+    <form id="create-station-form" method="POST" action="{{ route('stations.store') }}" enctype="multipart/form-data" class="space-y-5">
         @csrf
 
-        <div class="mb-4">
-            <label class="block font-semibold mb-1" for="name">Station Name</label>
-            <input type="text" id="name" name="name" class="w-full border rounded p-2">
-            <small class="text-red-600 hidden" id="error-name"></small>
+        <!-- Station Name -->
+        <div>
+            <label class="block text-sm font-medium mb-1" for="name">Station Name <span class="text-red-500">*</span></label>
+            <input type="text" id="name" name="name" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring focus:ring-blue-500 text-white">
+            <small class="text-red-400 hidden" id="error-name"></small>
         </div>
 
-        <div class="mb-4">
-            <label class="block font-semibold mb-1" for="description">Description</label>
-            <textarea id="description" name="description" class="w-full border rounded p-2"></textarea>
+        <!-- Description -->
+        <div>
+            <label class="block text-sm font-medium mb-1" for="description">Description</label>
+            <textarea id="description" name="description" rows="4" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white"></textarea>
         </div>
 
-        <div class="mb-4">
-            <label class="block font-semibold mb-1" for="image">Image</label>
-            <label for="image" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                    <svg class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4a1 1 0 011-1h8a1 1 0 011 1v12m-5 4l-4-4h8l-4 4z" />
+        <!-- Image Upload -->
+        <div>
+            <label class="block text-sm font-medium mb-1">Image</label>
+            <label for="image" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-500 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6 text-gray-400">
+                    <svg class="w-10 h-10 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M7 16V4a1 1 0 011-1h8a1 1 0 011 1v12m-5 4l-4-4h8l-4 4z" />
                     </svg>
-                    <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                    <p class="text-xs text-gray-500">PNG, JPG (MAX. 5MB)</p>
+                    <p class="mb-1 text-sm"><span class="font-semibold">Click to upload</span> or drag</p>
+                    <p class="text-xs">PNG, JPG (MAX. 5MB)</p>
                 </div>
                 <input id="image" name="image" type="file" class="hidden" />
             </label>
-            <p id="file-name" class="text-lg mt-2 text-gray-700"></p>
-            <small class="text-red-600 hidden" id="error-image"></small>
+            <p id="file-name" class="text-sm mt-2 text-gray-300"></p>
+            <small class="text-red-400 hidden" id="error-image"></small>
         </div>
 
-        <div class="mb-4">
-            <label class="block font-semibold mb-1" for="src">Source</label>
-            <input type="text" id="src" name="src" class="w-full border rounded p-2">
-            <small class="text-red-600 hidden" id="error-src"></small>
+        <!-- Source -->
+        <div>
+            <label class="block text-sm font-medium mb-1" for="src">Source URL <span class="text-red-500">*</span></label>
+            <input type="text" id="src" name="src" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white">
+            <small class="text-red-400 hidden" id="error-src"></small>
         </div>
 
-        <div class="mb-4">
-            <label class="block font-semibold mb-1" for="country_id">Country</label>
-            <select id="country_id" name="country_id" class="w-full border rounded p-2">
-                <option value="">Select Country</option>
-                @foreach ($countries as $country)
-                    <option value="{{ $country->id }}">{{ $country->country }}</option>
-                @endforeach
-            </select>
-            <small class="text-red-600 hidden" id="error-country_id"></small>
+        <!-- Dropdown Fields -->
+        @foreach ([
+            'country_id' => $countries,
+            'city_id' => $cities,
+            'language_id' => $languages
+        ] as $id => $collection)
+            <div>
+                <label class="block text-sm font-medium mb-1 capitalize" for="{{ $id }}">{{ str_replace('_', ' ', $id) }} <span class="text-red-500">*</span></label>
+                <select id="{{ $id }}" name="{{ $id }}" class="w-full p-3 bg-gray-800 border border-gray-700 text-white rounded-lg">
+                    <option value="">Select</option>
+                    @foreach ($collection as $item)
+                        <option value="{{ $item->id }}">{{ $item->country ?? $item->city ?? $item->language }}</option>
+                    @endforeach
+                </select>
+                <small class="text-red-400 hidden" id="error-{{ $id }}"></small>
+            </div>
+        @endforeach
+
+        <!-- Type -->
+        <div>
+            <label class="block text-sm font-medium mb-1" for="type">Station Type <span class="text-red-500">*</span></label>
+            <input type="text" id="type" name="type" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white">
+            <small class="text-red-400 hidden" id="error-type"></small>
         </div>
 
-        <div class="mb-4">
-            <label class="block font-semibold mb-1" for="city_id">City</label>
-            <select id="city_id" name="city_id" class="w-full border rounded p-2">
-                <option value="">Select City</option>
-                @foreach ($cities as $city)
-                    <option value="{{ $city->id }}">{{ $city->city }}</option>
-                @endforeach
-            </select>
-            <small class="text-red-600 hidden" id="error-city_id"></small>
-        </div>
-
-        <div class="mb-4">
-            <label class="block font-semibold mb-1" for="language_id">Language</label>
-            <select id="language_id" name="language_id" class="w-full border rounded p-2">
-                <option value="">Select Language</option>
-                @foreach ($languages as $language)
-                    <option value="{{ $language->id }}">{{ $language->language }}</option>
-                @endforeach
-            </select>
-            <small class="text-red-600 hidden" id="error-language_id"></small>
-        </div>
-
-        <div class="mb-4">
-            <label class="block font-semibold mb-1" for="type">Type</label>
-            <input type="text" id="type" name="type" class="w-full border rounded p-2">
-            <small class="text-red-600 hidden" id="error-type"></small>
-        </div>
-
-        <!-- Tags Selection -->
-        <div class="mb-4">
-            <label class="block font-semibold mb-1" for="tags">Tags</label>
-            <select name="tags[]" id="tags" class="w-full border rounded p-2" multiple>
+        <!-- Tags -->
+        <div>
+            <label class="block text-sm font-medium mb-1" for="tags">Tags</label>
+            <select name="tags[]" id="tags" multiple class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white">
                 @foreach ($tags as $tag)
                     <option value="{{ $tag->id }}">{{ $tag->tag }}</option>
                 @endforeach
             </select>
-            <small class="text-red-600 hidden" id="error-tags"></small>
+            <small class="text-red-400 hidden" id="error-tags"></small>
         </div>
 
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Create Station
+        <!-- Submit -->
+        <button type="submit"
+                class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition">
+            🚀 Create Station
         </button>
     </form>
+</div>
 </div>
 @endsection
 

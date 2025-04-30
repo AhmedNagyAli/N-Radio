@@ -1,5 +1,5 @@
 <!-- Navbar -->
-<nav class="bg-zinc-950 p-4">
+<nav class="sticky top-0 z-50 bg-zinc-950 p-4">
     <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         <div class="relative flex items-center justify-between h-16">
             <!-- Logo -->

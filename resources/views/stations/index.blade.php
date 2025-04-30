@@ -9,7 +9,7 @@
     <div class="container px-4 mx-auto">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mb-12 md:mb-20">
             @foreach ($stations as $station)
-                <div class="bg-indigo-950 rounded-2xl shadow-xl overflow-hidden transition transform hover:scale-[1.02] duration-300">
+                <div class="bg-zinc-900 shadow-xl overflow-hidden transition transform hover:scale-[1.02] duration-300">
                     <a href="#">
                         <img class="w-full h-[300px] object-cover" src="{{ asset('storage/'.$station->image) }}" alt="{{ $station->name }}">
                     </a>
