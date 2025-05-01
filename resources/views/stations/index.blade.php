@@ -27,11 +27,14 @@
                         <p class="text-white text-base">{{ $station->city->city }}</p>
 
                         <div class="pt-4">
-                            <div class="bg-white p-3 rounded-lg shadow-inner flex items-center justify-between">
-                                <audio controls class="w-full focus:outline-none">
-                                    <source src="{{ $station->src }}" type="audio/mpeg">
-                                    Your browser does not support the audio element.
-                                </audio>
+                            <div class="bg-zinc-950 p-3 rounded-lg shadow-inner flex items-center justify-between">
+                                <button
+    class="play-button w-full text-white bg-indigo-950 hover:bg-indigo-700 px-4 py-2 rounded"
+    data-src="{{ $station->src }}"
+    data-title="{{ $station->name }}"
+    data-image="{{ asset('storage/'.$station->image) }}">
+    ▶️ Play
+</button>
 
                                 @auth
     <button
@@ -61,6 +64,13 @@
         </div>
     </div>
 </section>
+<div id="bottom-player" class="fixed bottom-0 left-0 right-0 bg-zinc-900 text-white p-4 flex items-center justify-between shadow-lg hidden z-50">
+    <div class="flex items-center gap-4">
+        <img id="player-image" src="" alt="Station image" class="w-14 h-14 object-cover rounded-md">
+        <span id="player-title" class="font-bold text-lg"></span>
+    </div>
+    <audio id="main-audio" controls class="w-full max-w-md"></audio>
+</div>
 @endsection
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -113,5 +123,45 @@
         });
     });
 </script>
+<script>
+    const allPlayers = document.querySelectorAll('audio');
+
+    allPlayers.forEach(player => {
+        player.addEventListener('play', () => {
+            allPlayers.forEach(other => {
+                if (other !== player) {
+                    other.pause();
+                }
+            });
+        });
+    });
+</script>
+<script>
+    const mainAudio = document.getElementById('main-audio');
+    const bottomPlayer = document.getElementById('bottom-player');
+    const playerTitle = document.getElementById('player-title');
+    const playerImage = document.getElementById('player-image');
+
+    document.querySelectorAll('.play-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const src = button.getAttribute('data-src');
+            const title = button.getAttribute('data-title');
+            const image = button.getAttribute('data-image');
+
+            mainAudio.src = src;
+            playerTitle.textContent = title;
+            playerImage.src = image;
+            bottomPlayer.classList.remove('hidden');
+            mainAudio.play();
+        });
+    });
+
+    window.addEventListener('beforeunload', () => {
+        mainAudio.pause();
+    });
+</script>
+
+
+
 
 @endsection
